@@ -2,7 +2,7 @@ defmodule Apartmentex.Helpers.Queryable do
 
   require Ecto.Query
 
-  def query_for_get(repo, _queryable, nil) do
+  def query_for_get(_repo, _queryable, nil) do
     raise ArgumentError, "cannot perform Apartmentex.get/5 because the given value is nil"
   end
 
@@ -13,7 +13,7 @@ defmodule Apartmentex.Helpers.Queryable do
     Ecto.Query.from(x in query, where: field(x, ^primary_key) == ^id)
   end
 
-  def query_for_get_by(repo, queryable, clauses) do
+  def query_for_get_by(_repo, queryable, clauses) do
     Enum.reduce(clauses, queryable, fn
       {field, nil}, _query ->
         raise ArgumentError, "cannot perform Apartmentex.get_by/5 because #{inspect field} is nil"

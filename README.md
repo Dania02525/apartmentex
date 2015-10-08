@@ -1,14 +1,43 @@
 # Apartmentex 
 
-Query and Insert into postgres schemas created with names like "tenant_1".
+Easy SaaS for Phoenix/Ecto.
+
+*Tenant-qualified queries targeting postgres schemas or MySql databases
+*Automatic migrations for tenant tables to schema for Postgres or
+database for MySQL
 
 ### Setup
 
-This isn't ready for use yet
+*Add this to your mix.exs deps: {:apartmentex, git: "https://github.com/Dania02525/apartmentex.git"}
+*Run mix deps.get && mix deps.compile
 
 
 ### Use
-Simply replace Repo calls with the Apartmentex call, passing it the tenant id or the tenent struct itself
+Place tenant only migrations in a new folder in priv/repo called 
+"tenant_migrations".  These migrations should use Apartmentex.Migration, 
+not Ecto.Migration.
+
+You can now add a new tenant and automatically create a new schema for Postgres users
+or a new database for MySQL users, and run the migrations in 
+priv/repo/tenant_migrations for that schema or database. 
+
+```elixir
+
+Apartmentex.new_tenant(Repo, tenant) 
+
+```
+
+When deleting a tenant, you can also automatically drop thier 
+associated schema or database (for MySQL).  
+
+```elixir
+
+Apartmentex.drop_tenant(Repo, tenant)
+
+```
+
+include the tenant struct or tenant id in Apartmentex calls
+for queries, inserts, updates, and deletes.  
 
 ```elixir
 
@@ -16,14 +45,13 @@ Simply replace Repo calls with the Apartmentex call, passing it the tenant id or
 
   Apartmentex.insert(Repo, changeset, tenant_id)
 
-  Apartmentex.update(Repo, changeset, tenant_id)
+  Apartmentex.update(Repo, changeset, tenant)
 
-  Apartmentex.delete!(Repo, widget, tenant_id)
+  Apartmentex.delete!(Repo, widget, tenant)
 
 ```
 
 ### To Do
 
-*Add create schema and drop schema functions
-
-*Add migration by hijacking Ecto.Migrator
+*mix task to migrate or rollback all tenant schemas/databases
+*tests
