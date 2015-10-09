@@ -110,6 +110,10 @@ defmodule Apartmentex do
     MHelpers.do_insert(repo, repo.__adapter__, new_changeset, opts)
   end
 
+  def insert(repo, model_or_changeset, tenant, opts \\ []) do
+    insert(repo, model_or_changeset, tenant, opts)
+  end
+
   def insert!(repo, model_or_changeset, tenant, opts \\ []) do
     case insert(repo, model_or_changeset, tenant, opts) do
       {:ok, model} -> model
@@ -118,9 +122,7 @@ defmodule Apartmentex do
     end
   end
 
-  def insert(repo, model_or_changeset, tenant, opts \\ []) do
-    insert(repo, model_or_changeset, tenant, opts)
-  end
+  
 
 
 
@@ -151,6 +153,10 @@ defmodule Apartmentex do
     MHelpers.do_update(repo, repo.__adapter__, new_changeset, opts)
   end
 
+  def update(repo, model_or_changeset, tenant, opts \\ []) do
+    update(repo, model_or_changeset, tenant, opts)
+  end
+
   def update!(repo, model_or_changeset, tenant, opts \\ []) do
     case update(repo, model_or_changeset, tenant, opts) do
       {:ok, model} -> model
@@ -159,9 +165,7 @@ defmodule Apartmentex do
     end
   end
 
-  def update(repo, model_or_changeset, tenant, opts \\ []) do
-    update(repo, model_or_changeset, tenant, opts)
-  end
+  
 
    @doc """
   Runtime callback for `Apartmentex.update_all/5`
@@ -204,6 +208,10 @@ defmodule Apartmentex do
     MHelpers.do_delete(repo, repo.__adapter__, new_changeset, opts)
   end
 
+  def delete(repo, model_or_changeset, tenant, opts \\ []) do
+    delete(repo, model_or_changeset, tenant, opts)
+  end
+
   def delete!(repo, model_or_changeset, tenant, opts \\ []) do
     case delete(repo, model_or_changeset, tenant, opts) do
       {:ok, model} -> model
@@ -212,9 +220,7 @@ defmodule Apartmentex do
     end
   end
 
-  def delete(repo, model_or_changeset, tenant, opts \\ []) do
-    delete(repo, model_or_changeset, tenant, opts)
-  end
+  
 
   @doc """
   Implementation for `Apartmentex.delete_all/4`

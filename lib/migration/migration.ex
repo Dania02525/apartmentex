@@ -9,6 +9,7 @@ defmodule Apartmentex.Migration do
     """
     defstruct table: nil,
               name: nil,
+              prefix: nil,
               columns: [],
               unique: false,
               concurrently: false,
@@ -17,6 +18,7 @@ defmodule Apartmentex.Migration do
     @type t :: %__MODULE__{
       table: atom,
       name: atom,
+      prefix: atom,
       columns: [atom | String.t],
       unique: boolean,
       concurrently: boolean,
@@ -38,12 +40,14 @@ defmodule Apartmentex.Migration do
     """
     defstruct name: nil,
               table: nil,
+              prefix: nil,
               column: :id,
               type: :serial,
               on_delete: :nothing
 
     @type t :: %__MODULE__{
       table: atom,
+      prefix: atom,
       column: atom,
       type: atom,
       on_delete: atom

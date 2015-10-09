@@ -65,12 +65,34 @@ defmodule Apartmentex.Migration.Runner do
   def apply_prefix(commands) do  
     prefix =  Agent.get(__MODULE__, & &1.prefix)
     commands
-    |> Enum.map(fn({action, table, opts})->
-      case prefix do
-        nil -> {action, table,  opts}
-        string -> {action, %{table | prefix: string}, opts}
-      end
+    |> Enum.map(fn(command)->
+      do_apply_prefix(command, prefix)     
     end)
+  end
+
+  def do_apply_prefix({action, object, subcommands}, prefix) do
+    case prefix do
+      nil -> {action, object, subcommands}
+      string -> {action, %{object | prefix: string}, (subcommands |> Enum.map(fn(subcommand)-> do_apply_subcommand_prefix(subcommand, prefix) end))}
+    end
+  end
+
+  def do_apply_prefix({action, object}, prefix) do
+    case prefix do
+      nil -> {action, object}
+      string -> {action, %{object | prefix: string}}
+    end
+  end
+
+  def do_apply_subcommand_prefix({action, name, %Apartmentex.Migration.Reference{} = ref, opts}, prefix) do
+    case prefix do
+      nil -> {action, name, ref, opts}
+      string -> {action, name, %{ref | prefix: string}, opts}
+    end
+  end
+
+  def do_apply_subcommand_prefix({action, name, type, opts}, _prefix) do
+    {action, name, type, opts}
   end
 
   @doc """

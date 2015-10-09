@@ -111,7 +111,7 @@ if Code.ensure_loaded?(Mariaex.Connection) do
       assemble([create,
                 quote_name(index.name),
                 "ON",
-                quote_table(index.table),
+                quote_table(index.prefix, index.table),
                 "(#{Enum.map_join(index.columns, ", ", &index_expr/1)})",
                 using,
                 if_do(index.concurrently, "LOCK=NONE")])
@@ -123,7 +123,7 @@ if Code.ensure_loaded?(Mariaex.Connection) do
     def execute_ddl({:drop, %Index{}=index}) do
       assemble(["DROP INDEX",
                 quote_name(index.name),
-                "ON #{quote_table(index.table)}",
+                "ON #{quote_table(index.prefix, index.table)}",
                 if_do(index.concurrently, "LOCK=NONE")])
     end
 
@@ -244,13 +244,13 @@ if Code.ensure_loaded?(Mariaex.Connection) do
     defp constraint_expr(%Reference{} = ref, table, name),
       do: ", ADD CONSTRAINT #{reference_name(ref, table, name)} " <>
           "FOREIGN KEY (#{quote_name(name)}) " <>
-          "REFERENCES #{quote_name(ref.table)}(#{quote_name(ref.column)})" <>
+          "REFERENCES #{quote_table(ref.prefix, ref.table)}(#{quote_name(ref.column)})" <>
           reference_on_delete(ref.on_delete)
 
     defp reference_expr(%Reference{} = ref, table, name),
       do: ", CONSTRAINT #{reference_name(ref, table, name)} FOREIGN KEY " <>
           "(#{quote_name(name)}) REFERENCES " <>
-          "#{quote_table(ref.table)}(#{quote_name(ref.column)})" <>
+          "#{quote_table(ref.prefix, ref.table)}(#{quote_name(ref.column)})" <>
           reference_on_delete(ref.on_delete)
 
     defp reference_name(%Reference{name: nil}, table, column),
