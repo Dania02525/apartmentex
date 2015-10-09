@@ -6,6 +6,8 @@ Easy SaaS for Phoenix/Ecto.
 *Automatic migrations for tenant tables to schema for Postgres or
 database for MySQL
 
+See an example app at https://github.com/Dania02525/widget_saas
+
 ### Setup
 
 *Add this to your mix.exs deps: {:apartmentex, git: "https://github.com/Dania02525/apartmentex.git"}
@@ -20,6 +22,9 @@ not Ecto.Migration.
 You can now add a new tenant and automatically create a new schema for Postgres users
 or a new database for MySQL users, and run the migrations in 
 priv/repo/tenant_migrations for that schema or database. 
+
+Table references and indexes in a migration will be applied to the same tenant prefix as the table within 
+tenant_migrations. 
 
 ```elixir
 
