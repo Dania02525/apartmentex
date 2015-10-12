@@ -8,6 +8,7 @@ defmodule Apartmentex.Migration.Runner do
 
   alias Apartmentex.Migration.Table
   alias Apartmentex.Migration.Index
+  alias Apartmentex.Migration.Manager
 
   @opts [timeout: :infinity, log: false]
 
@@ -16,8 +17,9 @@ defmodule Apartmentex.Migration.Runner do
   """
   def run(repo, module, direction, operation, migrator_direction, opts) do
     level = Keyword.get(opts, :log, :info)
-    prefix = Keyword.get(opts, :prefix, nil)
-    start_link(repo, direction, migrator_direction, prefix, level)
+    
+    {:ok, runner} = start_link(repo, direction, migrator_direction, level)
+    Manager.put_runner(self(), runner)
 
     log(level, "== Running #{inspect module}.#{operation}/0 #{direction}")
     {time1, _} = :timer.tc(module, operation, [])
@@ -31,18 +33,18 @@ defmodule Apartmentex.Migration.Runner do
   @doc """
   Starts the runner for the specified repo.
   """
-  def start_link(repo, direction, migrator_direction, prefix, level) do
+  def start_link(repo, direction, migrator_direction, level) do
     Agent.start_link(fn ->
       %{direction: direction, repo: repo, migrator_direction: migrator_direction,
-        command: nil, subcommands: [], prefix: prefix, level: level, commands: []}
-    end, name: __MODULE__)
+        command: nil, subcommands: [], level: level, commands: []}
+    end)
   end
 
   @doc """
   Stops the runner.
   """
   def stop() do
-    Agent.stop(__MODULE__)
+    Agent.stop(runner)
   end
 
   @doc """
@@ -55,44 +57,7 @@ defmodule Apartmentex.Migration.Runner do
 
   """
   def migrator_direction do
-    Agent.get(__MODULE__, & &1.migrator_direction)
-  end
-
-  @doc """
-  Returns the prefix.
-
-  """
-  def apply_prefix(commands) do  
-    prefix =  Agent.get(__MODULE__, & &1.prefix)
-    commands
-    |> Enum.map(fn(command)->
-      do_apply_prefix(command, prefix)     
-    end)
-  end
-
-  def do_apply_prefix({action, object, subcommands}, prefix) do
-    case prefix do
-      nil -> {action, object, subcommands}
-      string -> {action, %{object | prefix: string}, (subcommands |> Enum.map(fn(subcommand)-> do_apply_subcommand_prefix(subcommand, prefix) end))}
-    end
-  end
-
-  def do_apply_prefix({action, object}, prefix) do
-    case prefix do
-      nil -> {action, object}
-      string -> {action, %{object | prefix: string}}
-    end
-  end
-
-  def do_apply_subcommand_prefix({action, name, %Apartmentex.Migration.Reference{} = ref, opts}, prefix) do
-    case prefix do
-      nil -> {action, name, ref, opts}
-      string -> {action, name, %{ref | prefix: string}, opts}
-    end
-  end
-
-  def do_apply_subcommand_prefix({action, name, type, opts}, _prefix) do
-    {action, name, type, opts}
+    Agent.get(runner, & &1.migrator_direction)
   end
 
   @doc """
@@ -102,11 +67,10 @@ defmodule Apartmentex.Migration.Runner do
   on a change/0 function and resets commands queue.
   """
   def flush do
-    %{commands: commands, direction: direction} = Agent.get_and_update(__MODULE__, fn (state) ->
+    %{commands: commands, direction: direction} = Agent.get_and_update(runner, fn (state) ->
       {state, %{state | commands: []}}
     end)
     commands  = (if direction == :backward, do: commands, else: Enum.reverse(commands)) 
-    |> apply_prefix
 
     for command <- commands do
       {repo, direction, level} = repo_and_direction_and_level()
@@ -121,7 +85,7 @@ defmodule Apartmentex.Migration.Runner do
   is in `:backward` direction and `command` is irreversible.
   """
   def execute(command) do
-    Agent.update __MODULE__, fn state ->
+    Agent.update runner, fn state ->
       %{state | command: nil, subcommands: [], commands: [command|state.commands]}
     end
   end
@@ -130,14 +94,14 @@ defmodule Apartmentex.Migration.Runner do
   Starts a command.
   """
   def start_command(command) do
-    Agent.update __MODULE__, &put_in(&1.command, command)
+    Agent.update runner, &put_in(&1.command, command)
   end
 
   @doc """
   Queues and clears current command. Must call `start_command/1` first.
   """
   def end_command do
-    Agent.update __MODULE__, fn state ->
+    Agent.update runner, fn state ->
       {operation, object} = state.command
       command = {operation, object, Enum.reverse(state.subcommands)}
       %{state | command: nil, subcommands: [], commands: [command|state.commands]}
@@ -149,7 +113,7 @@ defmodule Apartmentex.Migration.Runner do
   """
   def subcommand(subcommand) do
     reply =
-      Agent.get_and_update(__MODULE__, fn
+      Agent.get_and_update(runner, fn
         %{command: nil} = state ->
           {:error, state}
         state ->
@@ -214,8 +178,12 @@ defmodule Apartmentex.Migration.Runner do
 
   ## Helpers
 
+  defp runner do
+    Manager.get_runner(self())
+  end
+
   defp repo_and_direction_and_level do
-    Agent.get(__MODULE__, fn %{repo: repo, direction: direction, level: level} ->
+    Agent.get(runner, fn %{repo: repo, direction: direction, level: level} ->
       {repo, direction, level}
     end)
   end
@@ -263,8 +231,20 @@ defmodule Apartmentex.Migration.Runner do
   defp command({:rename, %Table{} = table, current_column, new_column}),
     do: "rename column #{current_column} to #{new_column} on table #{quote_table(table.prefix, table.name)}"
 
-  defp quote_table(nil, name),    do: quote_table(name)
-  defp quote_table(prefix, name), do: quote_table(prefix) <> "." <> quote_table(name)
+  defp quote_table(nil, name) do
+      case Manager.get_prefix(self()) do
+        nil -> quote_table(name)
+        prefix -> quote_table(prefix) <> "." <> quote_table(name)
+      end
+    end 
+    defp quote_table(prefix, name) do
+      case {Manager.get_prefix(self()), Manager.get_prefix(self()) == prefix} do
+        {nil, _} -> quote_table(prefix) <> "." <> quote_table(name)        
+        {prefix, true} -> quote_table(prefix) <> "." <> quote_table(name)
+        {_, false} -> raise Ecto.MigrationError, 
+          message: "Prefixes given as migration options must match global migrator prefix"
+      end
+    end
   defp quote_table(name) when is_atom(name),
       do: quote_table(Atom.to_string(name))
   defp quote_table(name), do: name

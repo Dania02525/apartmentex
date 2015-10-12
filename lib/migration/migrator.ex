@@ -8,6 +8,7 @@ defmodule Apartmentex.Migrator do
 
   alias Apartmentex.Migration.Runner
   alias Apartmentex.Migration.SchemaMigration
+  alias Apartmentex.Migration.Manager
 
   @doc """
   Gets all migrated versions.
@@ -31,6 +32,8 @@ defmodule Apartmentex.Migrator do
   """
   @spec up(Ecto.Repo.t, integer, Module.t, Keyword.t) :: :ok | :already_up | no_return
   def up(repo, version, module, opts \\ []) do
+    ensure_manager_started
+    Manager.put_migration(self(), Keyword.get(opts, :prefix, nil))
     versions = migrated_versions(repo, opts)
 
     if version in versions do
@@ -61,6 +64,8 @@ defmodule Apartmentex.Migrator do
   """
   @spec down(Ecto.Repo.t, integer, Module.t) :: :ok | :already_down | no_return
   def down(repo, version, module, opts \\ []) do
+    ensure_manager_started
+    Manager.put_migration(self(), Keyword.get(opts, :prefix, nil))
     versions = migrated_versions(repo, opts)
 
     if version in versions do
@@ -115,6 +120,8 @@ defmodule Apartmentex.Migrator do
   """
   @spec run(Ecto.Repo.t, binary, atom, Keyword.t) :: [integer]
   def run(repo, directory, direction, opts) do
+    ensure_manager_started
+    Manager.put_migration(self(), Keyword.get(opts, :prefix, nil))
     versions = migrated_versions(repo, opts)
 
     cond do
@@ -230,4 +237,12 @@ defmodule Apartmentex.Migrator do
 
   defp log(false, _msg), do: :ok
   defp log(level, msg),  do: Logger.log(level, msg)
+
+  defp ensure_manager_started do
+    case Manager.start_link do
+      {:ok, _} -> nil
+      {:error, {:already_started, _}} -> nil
+      _ -> raise Ecto.MigrationError, message: "Unable to start migration manager"
+    end
+  end
 end
