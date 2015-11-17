@@ -106,7 +106,7 @@ defmodule Apartmentex.Migration do
   defp do_create(object, command, block) do
     quote do
       table = %Table{} = unquote(object)
-      Runner.start_command({unquote(command), table})
+      Runner.start_command({unquote(command), %{table | prefix: prefix(table.prefix)}})
 
       if table.primary_key do
         add(:id, :serial, primary_key: true)
@@ -133,7 +133,7 @@ defmodule Apartmentex.Migration do
   defmacro alter(object, do: block) do
     quote do
       table = %Table{} = unquote(object)
-      Runner.start_command({:alter, table})
+      Runner.start_command({:alter, %{table | prefix: prefix(table.prefix)}})
       unquote(block)
       Runner.end_command
     end
@@ -153,7 +153,7 @@ defmodule Apartmentex.Migration do
 
   """
   def create(%Index{} = index) do
-    Runner.execute {:create, index}
+    Runner.execute {:create, %{index | prefix: prefix(index.prefix)}}
   end
 
   def create(%Table{} = table) do
@@ -172,7 +172,7 @@ defmodule Apartmentex.Migration do
 
   """
   def create_if_not_exists(%Index{} = index) do
-    Runner.execute {:create_if_not_exists, index}
+    Runner.execute {:create_if_not_exists, %{index | prefix: prefix(index.prefix)}}
   end
 
   def create_if_not_exists(%Table{} = table) do
@@ -187,7 +187,7 @@ defmodule Apartmentex.Migration do
         []
       end
 
-    Runner.execute {command, table, columns}
+    Runner.execute {command, %{table | prefix: prefix(table.prefix)}, columns}
   end
 
   @doc """
@@ -200,7 +200,7 @@ defmodule Apartmentex.Migration do
 
   """
   def drop(%{} = object) do
-    Runner.execute {:drop, object}
+    Runner.execute {:drop, %{object | prefix: prefix(object.prefix)}}
     object
   end
 
@@ -216,7 +216,7 @@ defmodule Apartmentex.Migration do
 
   """
   def drop_if_exists(%{} = object) do
-    Runner.execute {:drop_if_exists, object}
+    Runner.execute {:drop_if_exists, %{object | prefix: prefix(object.prefix)}}
   end
 
   @doc """
@@ -406,7 +406,7 @@ defmodule Apartmentex.Migration do
       rename table(:posts), to: table(:new_posts)
   """
   def rename(%Table{} = table_current, to: %Table{} = table_new) do
-    Runner.execute {:rename, table_current, table_new}
+    Runner.execute {:rename, %{table_current | prefix: prefix(table_current.prefix)}, %{table_new | prefix: prefix(table_new.prefix)}}
     table_new
   end
 
@@ -418,7 +418,7 @@ defmodule Apartmentex.Migration do
       rename table(:posts), :title, to: :summary
   """
   def rename(%Table{} = table, current_column, to: new_column) when is_atom(current_column) and is_atom(new_column) do
-    Runner.execute {:rename, table, current_column, new_column}
+    Runner.execute {:rename, %{table | prefix: prefix(table.prefix)}, current_column, new_column}
     table
   end
 
@@ -512,7 +512,7 @@ defmodule Apartmentex.Migration do
       raise ArgumentError, "unknown :on_delete value: #{inspect reference.on_delete}"
     end
 
-    reference
+    %{reference | prefix: prefix(reference.prefix)}
   end
 
   @doc """
@@ -542,5 +542,18 @@ defmodule Apartmentex.Migration do
 
   defp validate_type!(%Reference{} = reference) do
     reference
+  end
+
+  def prefix(opts_prefix) when is_nil(opts_prefix) do
+    Runner.prefix()
+  end
+
+  def prefix(opts_prefix) do
+    case {Runner.prefix(), Runner.prefix() == opts_prefix} do
+      {nil, _} -> opts_prefix
+      {prefix, true} -> prefix
+      {_, false} -> raise Ecto.MigrationError, 
+        message: "prefixes given as migration options must match global migrator prefix"
+    end
   end
 end

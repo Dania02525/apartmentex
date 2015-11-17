@@ -17,10 +17,9 @@ defmodule Apartmentex.Migration.Runner do
   """
   def run(repo, module, direction, operation, migrator_direction, opts) do
     level = Keyword.get(opts, :log, :info)
-    
-    {:ok, runner} = start_link(repo, direction, migrator_direction, level)
-    Manager.put_runner(self(), runner)
 
+    start_link(repo, direction, migrator_direction, level, opts[:prefix])
+    
     log(level, "== Running #{inspect module}.#{operation}/0 #{direction}")
     {time1, _} = :timer.tc(module, operation, [])
     {time2, _} = :timer.tc(&flush/0, [])
@@ -33,11 +32,12 @@ defmodule Apartmentex.Migration.Runner do
   @doc """
   Starts the runner for the specified repo.
   """
-  def start_link(repo, direction, migrator_direction, level) do
-    Agent.start_link(fn ->
+  def start_link(repo, direction, migrator_direction, level, prefix) do
+    {:ok, runner} = Agent.start_link(fn ->
       %{direction: direction, repo: repo, migrator_direction: migrator_direction,
-        command: nil, subcommands: [], level: level, commands: []}
+        command: nil, subcommands: [], level: level, prefix: prefix, commands: []}
     end)
+    Manager.put_migration(self(), runner)
   end
 
   @doc """
@@ -45,6 +45,7 @@ defmodule Apartmentex.Migration.Runner do
   """
   def stop() do
     Agent.stop(runner)
+    Manager.drop_migration(self())
   end
 
   @doc """
@@ -58,6 +59,13 @@ defmodule Apartmentex.Migration.Runner do
   """
   def migrator_direction do
     Agent.get(runner, & &1.migrator_direction)
+  end
+
+  @doc """
+  Gets the prefix for this migration
+  """
+  def prefix do  
+    Agent.get(runner, & &1.prefix)
   end
 
   @doc """
@@ -198,6 +206,7 @@ defmodule Apartmentex.Migration.Runner do
     case repo.__adapter__ do
       Ecto.Adapters.Postgres -> Apartmentex.Adapters.Postgres
       Ecto.Adapters.MySQL -> Apartmentex.Adapters.MySQL
+      any -> any
     end
   end
 
@@ -231,20 +240,8 @@ defmodule Apartmentex.Migration.Runner do
   defp command({:rename, %Table{} = table, current_column, new_column}),
     do: "rename column #{current_column} to #{new_column} on table #{quote_table(table.prefix, table.name)}"
 
-  defp quote_table(nil, name) do
-      case Manager.get_prefix(self()) do
-        nil -> quote_table(name)
-        prefix -> quote_table(prefix) <> "." <> quote_table(name)
-      end
-    end 
-    defp quote_table(prefix, name) do
-      case {Manager.get_prefix(self()), Manager.get_prefix(self()) == prefix} do
-        {nil, _} -> quote_table(prefix) <> "." <> quote_table(name)        
-        {prefix, true} -> quote_table(prefix) <> "." <> quote_table(name)
-        {_, false} -> raise Ecto.MigrationError, 
-          message: "Prefixes given as migration options must match global migrator prefix"
-      end
-    end
+  defp quote_table(nil, name),    do: quote_table(name)
+  defp quote_table(prefix, name), do: quote_table(prefix) <> "." <> quote_table(name)
   defp quote_table(name) when is_atom(name),
       do: quote_table(Atom.to_string(name))
   defp quote_table(name), do: name

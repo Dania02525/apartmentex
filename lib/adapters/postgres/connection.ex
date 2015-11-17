@@ -92,7 +92,6 @@ if Code.ensure_loaded?(Postgrex.Connection) do
     alias Apartmentex.Migration.Table
     alias Apartmentex.Migration.Index
     alias Apartmentex.Migration.Reference
-    alias Apartmentex.Migration.Manager
 
     @drops [:drop, :drop_if_exists]
 
@@ -312,20 +311,8 @@ if Code.ensure_loaded?(Postgrex.Connection) do
       <<?", name::binary, ?">>
     end
 
-   defp quote_table(nil, name) do
-      case Manager.get_prefix(self()) do
-        nil -> quote_table(name)
-        prefix -> quote_table(prefix) <> "." <> quote_table(name)
-      end
-    end 
-    defp quote_table(prefix, name) do
-      case {Manager.get_prefix(self()), Manager.get_prefix(self()) == prefix} do
-        {nil, _} -> quote_table(prefix) <> "." <> quote_table(name)        
-        {prefix, true} -> quote_table(prefix) <> "." <> quote_table(name)
-        {_, false} -> raise Ecto.MigrationError, 
-          message: "Prefixes given as migration options must match global migrator prefix"
-      end
-    end
+    defp quote_table(nil, name),    do: quote_table(name)
+    defp quote_table(prefix, name), do: quote_table(prefix) <> "." <> quote_table(name)
 
     defp quote_table(name) when is_atom(name),
       do: quote_table(Atom.to_string(name))

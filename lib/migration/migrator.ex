@@ -18,8 +18,8 @@ defmodule Apartmentex.Migrator do
   """
   @spec migrated_versions(Ecto.Repo.t, binary) :: [integer]
   def migrated_versions(repo, opts) do
-    SchemaMigration.ensure_schema_migrations_table!(repo, opts)
-    SchemaMigration.migrated_versions(repo, opts)
+    SchemaMigration.ensure_schema_migrations_table!(repo, opts[:prefix])
+    SchemaMigration.migrated_versions(repo, opts[:prefix])
   end
 
   @doc """
@@ -33,7 +33,6 @@ defmodule Apartmentex.Migrator do
   @spec up(Ecto.Repo.t, integer, Module.t, Keyword.t) :: :ok | :already_up | no_return
   def up(repo, version, module, opts \\ []) do
     ensure_manager_started
-    Manager.put_migration(self(), Keyword.get(opts, :prefix, nil))
     versions = migrated_versions(repo, opts)
 
     if version in versions do
@@ -49,7 +48,7 @@ defmodule Apartmentex.Migrator do
       attempt(repo, module, :forward, :up, :up, opts)
         || attempt(repo, module, :forward, :change, :up, opts)
         || raise Ecto.MigrationError, message: "#{inspect module} does not implement a `up/0` or `change/0` function"
-      SchemaMigration.up(repo, version, opts)
+      SchemaMigration.up(repo, version, opts[:prefix])
     end
   end
 
@@ -65,7 +64,6 @@ defmodule Apartmentex.Migrator do
   @spec down(Ecto.Repo.t, integer, Module.t) :: :ok | :already_down | no_return
   def down(repo, version, module, opts \\ []) do
     ensure_manager_started
-    Manager.put_migration(self(), Keyword.get(opts, :prefix, nil))
     versions = migrated_versions(repo, opts)
 
     if version in versions do
@@ -121,7 +119,6 @@ defmodule Apartmentex.Migrator do
   @spec run(Ecto.Repo.t, binary, atom, Keyword.t) :: [integer]
   def run(repo, directory, direction, opts) do
     ensure_manager_started
-    Manager.put_migration(self(), Keyword.get(opts, :prefix, nil))
     versions = migrated_versions(repo, opts)
 
     cond do
