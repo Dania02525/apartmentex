@@ -16,36 +16,30 @@ See an example app at https://github.com/Dania02525/widget_saas
 ```
 - Run mix deps.get && mix deps.compile
 
+- You can also configure your tenant schema prefix, adding this to your application configs:
+```elixir
+config :apartmentex, schema_prefix: "prefix_" # the default prefix is "tenant_"
+```
 
 ### Use
-Place tenant only migrations in a new folder in priv/repo called
-"tenant_migrations".  These migrations should use Apartmentex.Migration,
-not Ecto.Migration.
 
-You can now add a new tenant and automatically create a new schema for Postgres users
-or a new database for MySQL users, and run the migrations in
-priv/repo/tenant_migrations for that schema or database.
+Place tenant only migrations in a new folder in priv/repo called "tenant_migrations". These migrations should use Apartmentex.Migration, not Ecto.Migration.
 
-Table references and indexes in a migration will be applied to the same tenant prefix as the table within
-tenant_migrations.
+You can now add a new tenant and automatically create a new schema for Postgres users or a new database for MySQL users, and run the migrations in priv/repo/tenant_migrations for that schema or database.
+
+Table references and indexes in a migration will be applied to the same tenant prefix as the table within tenant_migrations.
 
 ```elixir
-
 Apartmentex.new_tenant(Repo, tenant)
-
 ```
 
-When deleting a tenant, you can also automatically drop their
-associated schema or database (for MySQL).  
+When deleting a tenant, you can also automatically drop their associated schema or database (for MySQL).  
 
 ```elixir
-
 Apartmentex.drop_tenant(Repo, tenant)
-
 ```
 
-Include the tenant struct or tenant id in Apartmentex calls
-for queries, inserts, updates, and deletes.  
+Include the tenant struct or tenant id in Apartmentex calls for queries, inserts, updates, and deletes.  
 
 ```elixir
 
