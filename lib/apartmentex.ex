@@ -1,6 +1,6 @@
 defmodule Apartmentex do
 
-  @schema_prefix "tenant_"
+  @schema_prefix Application.get_env(:apartmentex, :schema_prefix) || "tenant_"
   @tenant_migration_folder "priv/repo/tenant_migrations"
   #warning: don't change this after you already have tenants
 
@@ -122,7 +122,7 @@ defmodule Apartmentex do
     end
   end
 
-  
+
 
 
 
@@ -165,7 +165,7 @@ defmodule Apartmentex do
     end
   end
 
-  
+
 
    @doc """
   Runtime callback for `Apartmentex.update_all/5`
@@ -220,7 +220,7 @@ defmodule Apartmentex do
     end
   end
 
-  
+
 
   @doc """
   Implementation for `Apartmentex.delete_all/4`
