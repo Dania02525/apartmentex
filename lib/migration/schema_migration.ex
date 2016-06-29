@@ -2,6 +2,7 @@ defmodule Apartmentex.Migration.SchemaMigration do
   # Define a schema that works with the schema_migrations table
   @moduledoc false
   use Ecto.Model
+  import Ecto, only: [put_meta: 2]
   import Ecto.Query, only: [from: 2]
 
   @primary_key false

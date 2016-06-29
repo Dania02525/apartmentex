@@ -96,7 +96,7 @@ defmodule Apartmentex do
   def insert(repo, %Changeset{} = changeset, tenant, opts) when is_list(opts) do
     changeset = MHelpers.update_changeset(changeset, :changeset, :insert, repo, opts)
 
-    new_changeset = %{changeset | model: Ecto.Model.put_meta(changeset.model,  prefix: build_prefix(tenant))}
+    new_changeset = %{changeset | model: Ecto.put_meta(changeset.model,  prefix: build_prefix(tenant))}
     MHelpers.do_insert(repo, repo.__adapter__, new_changeset, opts)
   end
 
@@ -106,7 +106,7 @@ defmodule Apartmentex do
       |> Ecto.Changeset.change()
       |> MHelpers.update_changeset(:model, :insert, repo, opts)
 
-    new_changeset = %{changeset | model: Ecto.Model.put_meta(changeset.model,  prefix: build_prefix(tenant))}
+    new_changeset = %{changeset | model: Ecto.put_meta(changeset.model,  prefix: build_prefix(tenant))}
     MHelpers.do_insert(repo, repo.__adapter__, new_changeset, opts)
   end
 
@@ -132,7 +132,7 @@ defmodule Apartmentex do
   def update(repo, %Changeset{} = changeset, tenant, opts) when is_list(opts) do
     changeset = MHelpers.update_changeset(changeset, :changeset, :update, repo, opts)
 
-    new_changeset = %{changeset | model: Ecto.Model.put_meta(changeset.model,  prefix: build_prefix(tenant))}
+    new_changeset = %{changeset | model: Ecto.put_meta(changeset.model,  prefix: build_prefix(tenant))}
     MHelpers.do_update(repo, repo.__adapter__, new_changeset, opts)
   end
 
@@ -149,7 +149,7 @@ defmodule Apartmentex do
       |> Map.put(:changes, changes)
       |> MHelpers.update_changeset(:model, :update, repo, opts)
 
-    new_changeset = %{changeset | model: Ecto.Model.put_meta(changeset.model,  prefix: build_prefix(tenant))}
+    new_changeset = %{changeset | model: Ecto.put_meta(changeset.model,  prefix: build_prefix(tenant))}
     MHelpers.do_update(repo, repo.__adapter__, new_changeset, opts)
   end
 
@@ -194,7 +194,7 @@ defmodule Apartmentex do
   def delete(repo, %Changeset{} = changeset, tenant, opts) when is_list(opts) do
     changeset = MHelpers.update_changeset(changeset, :changeset, :delete, repo, opts)
 
-    new_changeset = %{changeset | model: Ecto.Model.put_meta(changeset.model,  prefix: build_prefix(tenant))}
+    new_changeset = %{changeset | model: Ecto.put_meta(changeset.model,  prefix: build_prefix(tenant))}
     MHelpers.do_delete(repo, repo.__adapter__, new_changeset, opts)
   end
 
@@ -204,7 +204,7 @@ defmodule Apartmentex do
       |> Ecto.Changeset.change()
       |> MHelpers.update_changeset(:model, :delete, repo, opts)
 
-    new_changeset = %{changeset | model: Ecto.Model.put_meta(changeset.model,  prefix: build_prefix(tenant))}
+    new_changeset = %{changeset | model: Ecto.put_meta(changeset.model,  prefix: build_prefix(tenant))}
     MHelpers.do_delete(repo, repo.__adapter__, new_changeset, opts)
   end
 
