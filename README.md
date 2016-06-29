@@ -12,7 +12,7 @@ See an example app at https://github.com/Dania02525/widget_saas
 
 - Add this to your mix.exs deps:
 ```elixir
-{:apartmentex, github: "/Dania02525/apartmentex"}
+{:apartmentex, github: "Dania02525/apartmentex"}
 ```
 - Run mix deps.get && mix deps.compile
 
