@@ -22,7 +22,7 @@ defmodule Apartmentex.Migration.SchemaMigration do
   end
 
   def up(repo, version, prefix) do
-    repo.insert! %__MODULE__{version: version} |> put_meta(prefix: prefix), @opts
+    repo.insert! %__MODULE__{version: version} |> Ecto.put_meta(prefix: prefix), @opts
   end
 
   def down(repo, version, prefix) do
