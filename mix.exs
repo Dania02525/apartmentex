@@ -9,7 +9,7 @@ defmodule Apartmentex.Mixfile do
      package: [
       links: %{"Github" => "https://github.com/Dania02525/apartmentex"},
       maintainers: ["Dania Simmons"],
-      licences: ["MIT"]
+      licenses: ["MIT"]
      ],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
