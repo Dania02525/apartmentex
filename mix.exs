@@ -3,8 +3,14 @@ defmodule Apartmentex.Mixfile do
 
   def project do
     [app: :apartmentex,
-     version: "0.0.1",
+     version: "0.1.0",
      elixir: "~> 1.2-dev",
+     description: "SaaS Library for Ecto applications using Postgres or Mysql",
+     package: [
+      links: %{"Github" => "https://github.com/Dania02525/apartmentex"},
+      maintainers: ["Dania Simmons"],
+      licenses: ["MIT"]
+     ],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -28,6 +34,6 @@ defmodule Apartmentex.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [{:postgrex, "< 0.11.0"},
-    {:ecto, "~> 1.0"}]
+    {:ecto, "~> 1.1"}]
   end
 end
