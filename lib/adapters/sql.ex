@@ -181,7 +181,7 @@ defmodule Apartmentex.Adapters.SQL do
   end
 
   defp query(repo, sql, params, outer_queue_time, mapper, opts) do
-    {pool_mod, pool, timeout} = repo.__pool__
+    {pool_mod, pool, timeout, _} = repo.__pool__
     opts    = Keyword.put_new(opts, :timeout, timeout)
     timeout = Keyword.fetch!(opts, :timeout)
     log?    = Keyword.get(opts, :log, true)
