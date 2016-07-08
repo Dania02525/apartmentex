@@ -2,8 +2,11 @@
 
 Easy SaaS for Phoenix/Ecto.
 
-*Tenant-qualified queries targeting postgres schemas or MySql databases
-*Automatic migrations for tenant tables to schema for Postgres or
+## NOTE: This branch will be for Ecto 2.0 +, and will be updated shortly to work with that version.  If you are
+using pre-ecto 2.0, please choose the appropriate branch for your ecto version and appropriate hex package.
+
+* Tenant-qualified queries targeting postgres schemas or MySql databases
+* Automatic migrations for tenant tables to schema for Postgres or
 database for MySQL
 
 See an example app at https://github.com/Dania02525/widget_saas
@@ -33,13 +36,13 @@ Table references and indexes in a migration will be applied to the same tenant p
 Apartmentex.new_tenant(Repo, tenant)
 ```
 
-When deleting a tenant, you can also automatically drop their associated schema or database (for MySQL).  
+When deleting a tenant, you can also automatically drop their associated schema or database (for MySQL).
 
 ```elixir
 Apartmentex.drop_tenant(Repo, tenant)
 ```
 
-Include the tenant struct or tenant id in Apartmentex calls for queries, inserts, updates, and deletes.  
+Include the tenant struct or tenant id in Apartmentex calls for queries, inserts, updates, and deletes.
 
 ```elixir
 
