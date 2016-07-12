@@ -184,7 +184,7 @@ defmodule Apartmentex.Adapters.SQL do
     {pool_mod, pool, timeout, _} = repo.__pool__
     opts    = Keyword.put_new(opts, :timeout, timeout)
     timeout = Keyword.fetch!(opts, :timeout)
-    log?    = Keyword.get(opts, :log, true)
+    {log?, opts} = Keyword.pop(opts, :log, true)
 
     query_fun = fn({mod, conn}, inner_queue_time) ->
       query(mod, conn, inner_queue_time || outer_queue_time, sql, params, log?, opts)
