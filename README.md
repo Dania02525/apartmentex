@@ -8,9 +8,10 @@ Easy SaaS for Phoenix/Ecto.
 using pre-ecto 2.0, please choose the appropriate branch for your ecto version and appropriate hex package.
 
 In this branch, the following versions are supported:
-- Ecto 1.1.3-1.1.8
-- Postgrex 0.11.0
+* Ecto 1.1.3-1.1.8
+* Postgrex 0.11.0
 
+### Features
 * Tenant-qualified queries targeting postgres schemas or MySql databases
 * Automatic migrations for tenant tables to schema for Postgres or
 database for MySQL
