@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/Dania02525/apartmentex/tree/master.svg?style=shield)](https://circleci.com/gh/Dania02525/apartmentex/tree/master)
+
 # Apartmentex
 
 Easy SaaS for Phoenix/Ecto.
