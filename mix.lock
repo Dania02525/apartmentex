@@ -1,4 +1,5 @@
-%{"decimal": {:hex, :decimal, "1.1.0"},
-  "ecto": {:hex, :ecto, "1.0.4"},
-  "poolboy": {:hex, :poolboy, "1.5.1"},
-  "postgrex": {:hex, :postgrex, "0.9.1"}}
+%{"connection": {:hex, :connection, "1.0.3", "3145f7416be3df248a4935f24e3221dc467c1e3a158d62015b35bd54da365786", [:mix], []},
+  "decimal": {:hex, :decimal, "1.1.2", "79a769d4657b2d537b51ef3c02d29ab7141d2b486b516c109642d453ee08e00c", [:mix], []},
+  "ecto": {:hex, :ecto, "1.1.2", "b18fc577b21dd11b8bcaef6ff06c16793583cd309d359eb22465c180e69bd5ba", [:mix], [{:sbroker, "~> 0.7", [hex: :sbroker, optional: true]}, {:postgrex, "~> 0.10.0", [hex: :postgrex, optional: true]}, {:poolboy, "~> 1.4", [hex: :poolboy, optional: false]}, {:poison, "~> 1.0", [hex: :poison, optional: true]}, {:mariaex, "~> 0.5.0", [hex: :mariaex, optional: true]}, {:decimal, "~> 1.0", [hex: :decimal, optional: false]}]},
+  "poolboy": {:hex, :poolboy, "1.5.1", "6b46163901cfd0a1b43d692657ed9d7e599853b3b21b95ae5ae0a777cf9b6ca8", [:rebar], []},
+  "postgrex": {:hex, :postgrex, "0.10.0", "98cf581bbb921d696db261d1a9e1740252714dbea1f9224d3291d58f2d88ea82", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, optional: false]}, {:connection, "~> 1.0", [hex: :connection, optional: false]}]}}
