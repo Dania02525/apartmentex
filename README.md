@@ -4,11 +4,8 @@
 
 Easy SaaS for Phoenix/Ecto.
 
-## NOTE: This branch will be for Ecto 2.0 +, and will be updated shortly to work with that version.  If you are
-using pre-ecto 2.0, please choose the appropriate branch for your ecto version and appropriate hex package.
-
 In this branch, the following versions are supported:
-* Ecto 1.1.3-1.1.8
+* Ecto 2.0.x
 * Postgrex 0.11.0
 
 ### Features
@@ -33,7 +30,7 @@ config :apartmentex, schema_prefix: "prefix_" # the default prefix is "tenant_"
 
 ### Use
 
-Place tenant only migrations in a new folder in priv/repo called "tenant_migrations". These migrations should use Apartmentex.Migration, not Ecto.Migration.
+Place tenant only migrations in a new folder in priv/repo called "tenant_migrations".
 
 You can now add a new tenant and automatically create a new schema for Postgres users or a new database for MySQL users, and run the migrations in priv/repo/tenant_migrations for that schema or database.
 
