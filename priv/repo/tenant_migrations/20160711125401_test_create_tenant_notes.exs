@@ -1,5 +1,5 @@
 defmodule Apartmentex.TestPostgresRepo.Migrations.CreateTenantUser do
-  use Apartmentex.Migration
+  use Ecto.Migration
 
   def change do
     create table(:notes) do
