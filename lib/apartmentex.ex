@@ -1,26 +1,9 @@
 defmodule Apartmentex do
-  @schema_prefix Application.get_env(:apartmentex, :schema_prefix) || "tenant_"
-  @tenant_migration_folder "priv/repo/tenant_migrations"
-  #warning: don't change this after you already have tenants
-
   alias Ecto.Changeset
+  import Apartmentex.PrefixBuilder
 
-  def new_tenant(repo, tenant) do
-    prefix = build_prefix(tenant)
-    case repo.__adapter__ do
-      Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "CREATE SCHEMA #{prefix}", [])
-      Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "CREATE DATABASE #{prefix}", [])
-    end
-    Ecto.Migrator.run(repo, @tenant_migration_folder, :up, [all: true, prefix: String.to_atom(prefix)])
-  end
-
-  def drop_tenant(repo, tenant) do
-    prefix = build_prefix(tenant)
-    case repo.__adapter__ do
-      Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "DROP SCHEMA #{prefix} CASCADE", [])
-      Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "DROP DATABASE #{prefix}", [])
-    end
-  end
+  defdelegate drop_tenant(repo, tenant), to: Apartmentex.TenantActions
+  defdelegate new_tenant(repo, tenant), to: Apartmentex.TenantActions
 
   def all(repo, queryable, tenant, opts \\ []) when is_list(opts) do
     queryable
@@ -158,17 +141,5 @@ defmodule Apartmentex do
     queryable
     |> Ecto.Queryable.to_query
     |> Map.put(:prefix, build_prefix(tenant))
-  end
-
-  defp build_prefix(tenant) when is_integer(tenant) do
-    @schema_prefix <> Integer.to_string(tenant)
-  end
-
-  defp build_prefix(tenant) when is_binary(tenant) do
-    @schema_prefix <> tenant
-  end
-
-  defp build_prefix(tenant) do
-    @schema_prefix <> Integer.to_string(tenant.id)
   end
 end
