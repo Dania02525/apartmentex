@@ -11,7 +11,12 @@ defmodule Apartmentex do
       Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "CREATE SCHEMA #{prefix}", [])
       Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "CREATE DATABASE #{prefix}", [])
     end
-    Ecto.Migrator.run(repo, @tenant_migration_folder, :up, [all: true, prefix: String.to_atom(prefix)])
+    Ecto.Migrator.run(repo, tenant_migration_folder(repo), :up, [all: true, prefix: String.to_atom(prefix)])
+  end
+
+  defp tenant_migration_folder(repo) do
+    Keyword.fetch!(repo.config(), :otp_app)
+    |> Application.app_dir(@tenant_migration_folder)
   end
 
   def drop_tenant(repo, tenant) do
