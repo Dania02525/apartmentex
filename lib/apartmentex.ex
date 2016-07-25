@@ -2,10 +2,8 @@ defmodule Apartmentex do
   alias Ecto.Changeset
   import Apartmentex.PrefixBuilder
 
-  defdelegate [
-    drop_tenant(repo, tenant),
-    new_tenant(repo, tenant)
-  ], to: Apartmentex.TenantActions
+  defdelegate drop_tenant(repo, tenant), to: Apartmentex.TenantActions
+  defdelegate new_tenant(repo, tenant), to: Apartmentex.TenantActions
 
   def all(repo, queryable, tenant, opts \\ []) when is_list(opts) do
     queryable
