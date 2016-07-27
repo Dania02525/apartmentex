@@ -16,6 +16,7 @@ defmodule Apartmentex.TenantActions do
       {:ok, prefix, versions}
     rescue e in Postgrex.Error ->
       {:error, prefix, Postgrex.Error.message(e)}
+      #TODO: rescue MySQL error
     end
   end
 
