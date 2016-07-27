@@ -17,17 +17,6 @@ defmodule Apartmentex.TenantActions do
     {status, prefix, versions}
   end
 
-  defp handle_database_exceptions(fun) do
-    try do
-      {:ok, fun.()}
-    rescue
-      e in Postgrex.Error ->
-        {:error, Postgrex.Error.message(e)}
-      e in Mariaex.Error ->
-        {:error, Mariaex.Error.message(e)}
-    end
-  end
-
   def rollback_tenant(repo, tenant, to_version) do
     Ecto.Migrator.run(
       repo,
@@ -54,6 +43,17 @@ defmodule Apartmentex.TenantActions do
     case repo.__adapter__ do
       Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "DROP SCHEMA #{prefix} CASCADE", [])
       Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "DROP DATABASE #{prefix}", [])
+    end
+  end
+
+  defp handle_database_exceptions(fun) do
+    try do
+      {:ok, fun.()}
+    rescue
+      e in Postgrex.Error ->
+        {:error, Postgrex.Error.message(e)}
+      e in Mariaex.Error ->
+        {:error, Mariaex.Error.message(e)}
     end
   end
 
