@@ -20,9 +20,11 @@ defmodule Apartmentex.TenantActions do
   defp handle_database_exceptions(fun) do
     try do
       {:ok, fun.()}
-    rescue e in Postgrex.Error ->
-      {:error, Postgrex.Error.message(e)}
-      #TODO: rescue MySQL error
+    rescue
+      e in Postgrex.Error ->
+        {:error, Postgrex.Error.message(e)}
+      e in Mariaex.Error ->
+        {:error, Mariaex.Error.message(e)}
     end
   end
 
