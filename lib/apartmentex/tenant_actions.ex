@@ -7,15 +7,21 @@ defmodule Apartmentex.TenantActions do
   def migrate_tenant(repo, tenant) do
     prefix = build_prefix(tenant)
 
-    try do
-      versions = Ecto.Migrator.run(
+    {status, versions} = handle_database_exceptions fn ->
+      Ecto.Migrator.run(
         repo,
         tenant_migration_folder(repo),
         :up, [all: true, prefix: prefix]
       )
-      {:ok, prefix, versions}
+    end
+    {status, prefix, versions}
+  end
+
+  defp handle_database_exceptions(fun) do
+    try do
+      {:ok, fun.()}
     rescue e in Postgrex.Error ->
-      {:error, prefix, Postgrex.Error.message(e)}
+      {:error, Postgrex.Error.message(e)}
       #TODO: rescue MySQL error
     end
   end
@@ -29,12 +35,16 @@ defmodule Apartmentex.TenantActions do
   end
 
   def new_tenant(repo, tenant) do
+    create_schema(repo, tenant)
+    migrate_tenant(repo, tenant)
+  end
+
+  def create_schema(repo, tenant) do
     prefix = build_prefix(tenant)
     case repo.__adapter__ do
       Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "CREATE SCHEMA #{prefix}", [])
       Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "CREATE DATABASE #{prefix}", [])
     end
-    migrate_tenant(repo, tenant)
   end
 
   def drop_tenant(repo, tenant) do
