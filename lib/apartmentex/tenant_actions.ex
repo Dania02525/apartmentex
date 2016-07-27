@@ -5,30 +5,11 @@ defmodule Apartmentex.TenantActions do
   import Apartmentex.PrefixBuilder
 
   def migrate_tenant(repo, tenant) do
-    prefix = build_prefix(tenant)
-
-    {status, versions} = handle_database_exceptions fn ->
-      Ecto.Migrator.run(
-        repo,
-        tenant_migration_folder(repo),
-        :up, [all: true, prefix: prefix]
-      )
-    end
-    {status, prefix, versions}
+    migrate_and_return_status(repo, tenant, :up, all: true)
   end
 
   def rollback_tenant(repo, tenant, to_version) do
-    prefix = build_prefix(tenant)
-
-    {status, versions} = handle_database_exceptions fn ->
-      Ecto.Migrator.run(
-        repo,
-        tenant_migration_folder(repo),
-        :down, [to: to_version, prefix: prefix]
-      )
-    end
-
-    {status, prefix, versions}
+    migrate_and_return_status(repo, tenant, :down, to: to_version)
   end
 
   def new_tenant(repo, tenant) do
@@ -50,6 +31,22 @@ defmodule Apartmentex.TenantActions do
       Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "DROP SCHEMA #{prefix} CASCADE", [])
       Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "DROP DATABASE #{prefix}", [])
     end
+  end
+
+  defp migrate_and_return_status(repo, tenant, direction, opts) do
+    prefix = build_prefix(tenant)
+
+    {status, versions} = handle_database_exceptions fn ->
+      opts_with_prefix = Keyword.put(opts, :prefix, prefix)
+      Ecto.Migrator.run(
+        repo,
+        tenant_migration_folder(repo),
+        direction,
+        opts_with_prefix
+      )
+    end
+
+    {status, prefix, versions}
   end
 
   defp handle_database_exceptions(fun) do
