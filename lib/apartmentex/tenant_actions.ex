@@ -18,11 +18,17 @@ defmodule Apartmentex.TenantActions do
   end
 
   def rollback_tenant(repo, tenant, to_version) do
-    Ecto.Migrator.run(
-      repo,
-      tenant_migration_folder(repo),
-      :down, [to: to_version, prefix: build_prefix(tenant)]
-    )
+    prefix = build_prefix(tenant)
+
+    {status, versions} = handle_database_exceptions fn ->
+      Ecto.Migrator.run(
+        repo,
+        tenant_migration_folder(repo),
+        :down, [to: to_version, prefix: prefix]
+      )
+    end
+
+    {status, prefix, versions}
   end
 
   def new_tenant(repo, tenant) do
