@@ -2,18 +2,21 @@ defmodule Apartmentex.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :apartmentex,
-     version: "0.2.0",
-     elixir: "~> 1.2-dev",
-     description: "SaaS Library for Ecto applications using Postgres or Mysql",
-     package: [
-      links: %{"Github" => "https://github.com/Dania02525/apartmentex"},
-      maintainers: ["Dania Simmons"],
-      licenses: ["MIT"]
-     ],
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     deps: deps]
+    [
+      app: :apartmentex,
+      version: "0.2.0",
+      elixir: "~> 1.2-dev",
+      description: "SaaS Library for Ecto applications using Postgres or Mysql",
+      package: [
+        links: %{"Github" => "https://github.com/Dania02525/apartmentex"},
+        maintainers: ["Dania Simmons"],
+        licenses: ["MIT"]
+      ],
+      build_embedded: Mix.env == :prod,
+      start_permanent: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env),
+      deps: deps
+    ]
   end
 
   # Configuration for the OTP application
@@ -36,4 +39,8 @@ defmodule Apartmentex.Mixfile do
     [{:postgrex, "~> 0.11.0"},
     {:ecto, "~> 2.0.2"}]
   end
+
+  defp elixirc_paths(:test), do: elixirc_paths ++ ["test/support"]
+  defp elixirc_paths(_), do: elixirc_paths
+  defp elixirc_paths, do: ["lib"]
 end

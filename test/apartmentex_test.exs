@@ -1,21 +1,8 @@
 defmodule Apartmentex.ApartmentexTest do
   use ExUnit.Case
 
+  alias Apartmentex.Note
   alias Apartmentex.TestPostgresRepo
-
-  defmodule Note do
-    use Ecto.Schema
-    import Ecto.Changeset
-
-    schema "notes" do
-      field :body, :string
-    end
-
-    def changeset(model, params \\ :empty) do
-      model
-      |> cast(params, ~w(body), [])
-    end
-  end
 
   @tenant_id 2
 
