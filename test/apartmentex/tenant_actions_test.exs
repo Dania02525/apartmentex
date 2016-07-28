@@ -13,7 +13,7 @@ defmodule Apartmentex.TenantActionsTest do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(@repo)
   end
 
-  test ".migrate_tenant/2 migrates the tenant forward and returns metadata" do
+  test ".migrate_tenant/4 migrates the tenant forward by default" do
     create_tenant_schema
 
     assert_creates_notes_table fn ->
@@ -25,7 +25,7 @@ defmodule Apartmentex.TenantActionsTest do
     end
   end
 
-  test ".migrate_tenant/2 returns an error tuple when it fails" do
+  test ".migrate_tenant/4 returns an error tuple when it fails" do
     create_and_migrate_tenant
 
     force_migration_failure fn(expected_postgres_error) ->
@@ -37,12 +37,12 @@ defmodule Apartmentex.TenantActionsTest do
     end
   end
 
-  test ".rollback_tenant/3 reverts the specified migration and returns metadata" do
+  test ".migrate_tenant/4 can rollback and return metadata" do
     create_and_migrate_tenant
 
     assert_drops_notes_table fn ->
       {status, prefix, versions} =
-        Apartmentex.rollback_tenant(@repo, @tenant_id, @migration_version)
+        Apartmentex.migrate_tenant(@repo, @tenant_id, :down, to: @migration_version)
 
       assert status == :ok
       assert prefix == "tenant_#{@tenant_id}"
@@ -50,12 +50,12 @@ defmodule Apartmentex.TenantActionsTest do
     end
   end
 
-  test ".rollback_tenant/3 returns a tuple when it fails" do
+  test ".migrate_tenant/4 returns a tuple when it fails to rollback" do
     create_and_migrate_tenant
 
     force_rollback_failure fn(expected_postgres_error) ->
       {status, prefix, error_message} =
-        Apartmentex.rollback_tenant(@repo, @tenant_id, @migration_version)
+        Apartmentex.migrate_tenant(@repo, @tenant_id, :down, to: @migration_version)
 
       assert status == :error
       assert prefix == "tenant_#{@tenant_id}"

@@ -4,12 +4,28 @@ defmodule Apartmentex.TenantActions do
 
   import Apartmentex.PrefixBuilder
 
-  def migrate_tenant(repo, tenant) do
-    migrate_and_return_status(repo, tenant, :up, all: true)
-  end
+  @doc """
+  Apply migrations to a tenant with given strategy, in given direction.
 
-  def rollback_tenant(repo, tenant, to_version) do
-    migrate_and_return_status(repo, tenant, :down, to: to_version)
+  A direction can be given, as the third parameter, which defaults to `:up`
+  A strategy can be given as an option, and defaults to `:all`
+
+  ## Options
+
+    * `:all` - runs all available if `true`
+    * `:step` - runs the specific number of migrations
+    * `:to` - runs all until the supplied version is reached
+    * `:log` - the level to use for logging. Defaults to `:info`.
+      Can be any of `Logger.level/0` values or `false`.
+
+  """
+  def migrate_tenant(repo, tenant, direction \\ :up, opts \\ []) do
+    opts =
+      if opts[:to] || opts[:step] || opts[:all],
+        do: opts,
+        else: Keyword.put(opts, :all, true)
+
+    migrate_and_return_status(repo, tenant, direction, opts)
   end
 
   def new_tenant(repo, tenant) do

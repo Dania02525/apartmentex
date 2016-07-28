@@ -61,7 +61,7 @@ specified (including that version):
 # {:ok, prefix_of_tenant, versions_rolled_back}
 # {:error, prefix_of_tenant, db_error_message}
 
-{status, prefix, versions_or_error} = Apartmentex.rollback_tenant(Repo, tenant, 20160711125401)
+{status, prefix, versions_or_error} = Apartmentex.migrate_tenant(Repo, tenant, :down, to: 20160711125401)
 ```
 
 When deleting a tenant, you can also automatically drop their associated schema or database (for MySQL).
