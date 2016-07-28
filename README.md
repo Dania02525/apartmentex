@@ -40,6 +40,30 @@ Table references and indexes in a migration will be applied to the same tenant p
 Apartmentex.new_tenant(Repo, tenant)
 ```
 
+When you need to update a tenant's schema based on new migrations, you can run:
+
+```elixir
+# Runs all migrations necessary for the tenant, based on that tenant's
+`schema_migrations` table
+# Returns a tuple that is either:
+# {:ok, prefix_of_tenant, versions_migrated}
+# {:error, prefix_of_tenant, db_error_message}
+
+{status, prefix, versions_or_error} = Apartmentex.migrate_tenant(Repo, tenant)
+```
+
+If there is a problem with a migration, you can roll it back by passing in the
+version (as an integer). This will revert every migration back until the version
+specified (including that version):
+
+```elixir
+# Returns a tuple that is either:
+# {:ok, prefix_of_tenant, versions_rolled_back}
+# {:error, prefix_of_tenant, db_error_message}
+
+{status, prefix, versions_or_error} = Apartmentex.migrate_tenant(Repo, tenant, :down, to: 20160711125401)
+```
+
 When deleting a tenant, you can also automatically drop their associated schema or database (for MySQL).
 
 ```elixir

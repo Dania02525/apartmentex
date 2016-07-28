@@ -3,6 +3,7 @@ defmodule Apartmentex do
   import Apartmentex.PrefixBuilder
 
   defdelegate drop_tenant(repo, tenant), to: Apartmentex.TenantActions
+  defdelegate migrate_tenant(repo, tenant, direction \\ :up, opts \\ []), to: Apartmentex.TenantActions
   defdelegate new_tenant(repo, tenant), to: Apartmentex.TenantActions
 
   def all(repo, queryable, tenant, opts \\ []) when is_list(opts) do
