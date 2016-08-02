@@ -30,11 +30,23 @@ config :apartmentex, schema_prefix: "prefix_" # the default prefix is "tenant_"
 
 ### Use
 
-Place tenant only migrations in a new folder in priv/repo called "tenant_migrations".
+Generate a migration file that will be run against each tenant:
 
-You can now add a new tenant and automatically create a new schema for Postgres users or a new database for MySQL users, and run the migrations in priv/repo/tenant_migrations for that schema or database.
+```
+mix apartmentex.gen.migration CreateUsers
+```
 
-Table references and indexes in a migration will be applied to the same tenant prefix as the table within tenant_migrations.
+By default, the migration will be generated to the
+"priv/YOUR_REPO/tenant_migrations" directory of the current application but it
+can be configured to be any subdirectory of `priv` by specifying the `:priv` key
+under the repository configuration.
+
+You can now add a new tenant and automatically create a new schema for Postgres
+users or a new database for MySQL users, and run the migrations in
+priv/YOUR_REPO/tenant_migrations for that schema or database.
+
+Table references and indexes in a migration will be applied to the same tenant
+prefix as the table within tenant_migrations.
 
 ```elixir
 Apartmentex.new_tenant(Repo, tenant)
@@ -87,4 +99,3 @@ Include the tenant struct or tenant id in Apartmentex calls for queries, inserts
 ### To Do
 
 - mix task to migrate or rollback all tenant schemas/databases
-- tests
