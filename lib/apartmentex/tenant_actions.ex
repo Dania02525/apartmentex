@@ -1,7 +1,5 @@
 defmodule Apartmentex.TenantActions do
-  @tenant_migration_folder "priv/repo/tenant_migrations"
-  #warning: don't change this after you already have tenants
-
+  import Apartmentex.MigrationsPathBuilder
   import Apartmentex.PrefixBuilder
 
   @doc """
@@ -56,7 +54,7 @@ defmodule Apartmentex.TenantActions do
       opts_with_prefix = Keyword.put(opts, :prefix, prefix)
       Ecto.Migrator.run(
         repo,
-        tenant_migration_folder(repo),
+        tenant_migrations_path(repo),
         direction,
         opts_with_prefix
       )
@@ -74,10 +72,5 @@ defmodule Apartmentex.TenantActions do
       e in Mariaex.Error ->
         {:error, Mariaex.Error.message(e)}
     end
-  end
-
-  defp tenant_migration_folder(repo) do
-    Keyword.fetch!(repo.config(), :otp_app)
-    |> Application.app_dir(@tenant_migration_folder)
   end
 end
