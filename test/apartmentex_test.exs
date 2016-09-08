@@ -165,7 +165,7 @@ defmodule Apartmentex.ApartmentexTest do
     prefix = %Note{}
     |> set_tenant(@tenant_id)
     |> Ecto.get_meta(:prefix)
-    assert prefix == "tenant_2"
+    assert prefix == "tenant_#{@tenant_id}"
   end
 
   test ".set_tenant/2 changeset adds the tenant prefix" do
@@ -174,7 +174,7 @@ defmodule Apartmentex.ApartmentexTest do
     |> Map.fetch!(:data)
     |> Ecto.get_meta(:prefix)
 
-    assert prefix == "tenant_2"
+    assert prefix == "tenant_#{@tenant_id}"
   end
 
   test ".set_tenant/2 queryable adds the tenant prefix" do
@@ -183,5 +183,10 @@ defmodule Apartmentex.ApartmentexTest do
     |> Map.fetch!(:prefix)
 
     assert prefix == "tenant_#{@tenant_id}"
+  end
+
+  test ".extract_tenant/1 removes the prefix from the schema" do
+    assert Apartmentex.PrefixBuilder.extract_tenant("tenant_#{@tenant_id}") == "#{@tenant_id}"
+    assert Apartmentex.PrefixBuilder.extract_tenant("tenant_somestring") == "somestring"
   end
 end

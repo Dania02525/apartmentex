@@ -8,26 +8,12 @@ end
 
 defmodule Apartmentex.ApartmentexTest do
   use ExUnit.Case
-  import Apartmentex.PrefixBuilder
+  import Apartmentex.RepoAdditions
   alias Apartmentex.{Note,TenantMissingError}
   alias Apartmentex.Test.{TenantedRepo,UntenantedRepo}
 
   @tenant_id 2
   @error_message "No tenant specified in Elixir.Apartmentex.Note"
-
-  def set_tenant(%Ecto.Changeset{} = changeset, tenant) do
-    %{changeset | data: set_tenant(changeset.data, tenant)}
-  end
-
-  def set_tenant(%{__meta__: _} = model, tenant) do
-    Ecto.put_meta(model,  prefix: build_prefix(tenant))
-  end
-
-  def set_tenant(queryable, tenant) do
-    queryable
-    |> Ecto.Queryable.to_query
-    |> Map.put(:prefix, build_prefix(tenant))
-  end
 
   def scoped_note_query do
     Note
