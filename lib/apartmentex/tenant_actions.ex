@@ -34,7 +34,7 @@ defmodule Apartmentex.TenantActions do
   def create_schema(repo, tenant) do
     prefix = build_prefix(tenant)
     case repo.__adapter__ do
-      Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "CREATE SCHEMA #{prefix}", [])
+      Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "CREATE SCHEMA \"#{prefix}\"", [])
       Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "CREATE DATABASE #{prefix}", [])
     end
   end

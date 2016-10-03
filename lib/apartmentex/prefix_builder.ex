@@ -10,6 +10,11 @@ defmodule Apartmentex.PrefixBuilder do
   end
 
   def build_prefix(tenant) do
-    @schema_prefix <> Integer.to_string(tenant.id)
+    cond do
+      is_binary(tenant.id) ->
+        @schema_prefix <> tenant.id
+      is_integer(tenant.id) ->
+        @schema_prefix <> Integer.to_string(tenant.id)
+    end
   end
 end
