@@ -42,7 +42,7 @@ defmodule Apartmentex.TenantActions do
   def drop_tenant(repo, tenant) do
     prefix = build_prefix(tenant)
     case repo.__adapter__ do
-      Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "DROP SCHEMA #{prefix} CASCADE", [])
+      Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "DROP SCHEMA \"#{prefix}\" CASCADE", [])
       Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "DROP DATABASE #{prefix}", [])
     end
   end
