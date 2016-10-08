@@ -2,6 +2,10 @@ defmodule Apartmentex.TenantActions do
   import Apartmentex.MigrationsPathBuilder
   import Apartmentex.PrefixBuilder
 
+  alias Ecto.Adapters.SQL
+  alias Ecto.Adapters.Postgres
+  alias Ecto.Adapters.MySQL
+
   @doc """
   Apply migrations to a tenant with given strategy, in given direction.
 
@@ -34,16 +38,16 @@ defmodule Apartmentex.TenantActions do
   def create_schema(repo, tenant) do
     prefix = build_prefix(tenant)
     case repo.__adapter__ do
-      Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "CREATE SCHEMA \"#{prefix}\"", [])
-      Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "CREATE DATABASE #{prefix}", [])
+      Postgres -> SQL.query(repo, "CREATE SCHEMA \"#{prefix}\"", [])
+      MySQL    -> SQL.query(repo, "CREATE DATABASE #{prefix}", [])
     end
   end
 
   def drop_tenant(repo, tenant) do
     prefix = build_prefix(tenant)
     case repo.__adapter__ do
-      Ecto.Adapters.Postgres -> Ecto.Adapters.SQL.query(repo, "DROP SCHEMA \"#{prefix}\" CASCADE", [])
-      Ecto.Adapters.MySQL -> Ecto.Adapters.SQL.query(repo, "DROP DATABASE #{prefix}", [])
+      Postgres -> SQL.query(repo, "DROP SCHEMA \"#{prefix}\" CASCADE", [])
+      MySQL    -> SQL.query(repo, "DROP DATABASE #{prefix}", [])
     end
   end
 
