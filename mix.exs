@@ -39,7 +39,7 @@ defmodule Apartmentex.Mixfile do
     [
       {:ecto, "~> 2.0.2"},
       {:mariaex, "~> 0.7.7", optional: true},
-      {:postgrex, "~> 0.11.0", optional: true}
+      {:postgrex, ">= 0.11.0", optional: true}
     ]
   end
 
