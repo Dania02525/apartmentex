@@ -19,7 +19,7 @@ See an example app at https://github.com/Dania02525/widget_saas
 
 - Add this to your mix.exs deps:
 ```elixir
-{:apartmentex, "~> 0.2.0"}
+{:apartmentex, "~> 0.2.2"}
 ```
 - Run mix deps.get && mix deps.compile
 
