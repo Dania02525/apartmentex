@@ -8,6 +8,7 @@ Mix.Task.run "ecto.drop", ["quiet", "-r", "Apartmentex.TestPostgresRepo"]
 Mix.Task.run "ecto.create", ["quiet", "-r", "Apartmentex.TestPostgresRepo"]
 
 Apartmentex.TestPostgresRepo.start_link
+Ecto.TestRepo.start_link(url: "ecto://user:pass@local/hello")
 
 ExUnit.start()
 

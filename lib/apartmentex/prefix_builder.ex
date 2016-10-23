@@ -17,4 +17,8 @@ defmodule Apartmentex.PrefixBuilder do
         @schema_prefix <> Integer.to_string(tenant.id)
     end
   end
+
+  def extract_tenant(table_prefix) do
+    String.replace_prefix(table_prefix, @schema_prefix, "")
+  end
 end

@@ -1,6 +1,5 @@
 defmodule Apartmentex do
-  alias Ecto.Changeset
-  import Apartmentex.PrefixBuilder
+  import Apartmentex.RepoAdditions
 
   defdelegate drop_tenant(repo, tenant), to: Apartmentex.TenantActions
   defdelegate migrate_tenant(repo, tenant, direction \\ :up, opts \\ []), to: Apartmentex.TenantActions
@@ -8,7 +7,7 @@ defmodule Apartmentex do
 
   def all(repo, queryable, tenant, opts \\ []) when is_list(opts) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.all(opts)
   end
 
@@ -17,7 +16,7 @@ defmodule Apartmentex do
   """
   def get(repo, queryable, id, tenant, opts \\ []) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.get(id, opts)
   end
 
@@ -26,19 +25,19 @@ defmodule Apartmentex do
   """
   def get!(repo, queryable, id, tenant, opts \\ []) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.get!(id, opts)
   end
 
   def get_by(repo, queryable, clauses, tenant, opts \\ []) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.get_by(clauses, opts)
   end
 
   def get_by!(repo, queryable, clauses, tenant, opts \\ []) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.get_by!(clauses, opts)
   end
 
@@ -47,7 +46,7 @@ defmodule Apartmentex do
   """
   def one(repo, queryable, tenant, opts \\ []) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.one(opts)
   end
 
@@ -56,7 +55,7 @@ defmodule Apartmentex do
   """
   def one!(repo, queryable, tenant, opts \\ []) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.one!(opts)
   end
 
@@ -67,13 +66,13 @@ defmodule Apartmentex do
   """
   def insert(repo, model_or_changeset, tenant, opts \\ []) do
     model_or_changeset
-    |> add_prefix(tenant)
+    |> set_tenant(tenant)
     |> repo.insert(opts)
   end
 
   def insert!(repo, model_or_changeset, tenant, opts \\ []) do
     model_or_changeset
-    |> add_prefix(tenant)
+    |> set_tenant(tenant)
     |> repo.insert!(opts)
   end
 
@@ -82,13 +81,13 @@ defmodule Apartmentex do
   """
   def update(repo, model_or_changeset, tenant, opts \\ []) do
     model_or_changeset
-    |> add_prefix(tenant)
+    |> set_tenant(tenant)
     |> repo.update(opts)
   end
 
   def update!(repo, model_or_changeset, tenant, opts \\ []) do
     model_or_changeset
-    |> add_prefix(tenant)
+    |> set_tenant(tenant)
     |> repo.update!(opts)
   end
 
@@ -97,7 +96,7 @@ defmodule Apartmentex do
   """
   def update_all(repo, queryable, updates, tenant, opts \\ []) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.update_all(updates, opts)
   end
 
@@ -106,7 +105,7 @@ defmodule Apartmentex do
   """
   def delete(repo, model_or_changeset, tenant, opts \\ []) do
     model_or_changeset
-    |> add_prefix(tenant)
+    |> set_tenant(tenant)
     |> repo.delete(opts)
   end
 
@@ -115,7 +114,7 @@ defmodule Apartmentex do
   """
   def delete!(repo, model_or_changeset, tenant, opts \\ []) do
     model_or_changeset
-    |> add_prefix(tenant)
+    |> set_tenant(tenant)
     |> repo.delete!(opts)
   end
 
@@ -124,23 +123,11 @@ defmodule Apartmentex do
   """
   def delete_all(repo, queryable, tenant, opts \\ []) do
     queryable
-    |> add_prefix_to_query(tenant)
+    |> set_tenant(tenant)
     |> repo.delete_all(opts)
   end
 
   #helpers
 
-  defp add_prefix(%Changeset{} = changeset, tenant) do
-    %{changeset | data: add_prefix(changeset.data, tenant)}
-  end
 
-  defp add_prefix(%{__struct__: _} = model, tenant) do
-    Ecto.put_meta(model,  prefix: build_prefix(tenant))
-  end
-
-  defp add_prefix_to_query(queryable, tenant) do
-    queryable
-    |> Ecto.Queryable.to_query
-    |> Map.put(:prefix, build_prefix(tenant))
-  end
 end

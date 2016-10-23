@@ -3,6 +3,7 @@ defmodule Apartmentex.ApartmentexTest do
 
   alias Apartmentex.Note
   alias Apartmentex.TestPostgresRepo
+  import Apartmentex.RepoAdditions
 
   @tenant_id 2
 
@@ -158,5 +159,34 @@ defmodule Apartmentex.ApartmentexTest do
 
     updated_notes = Apartmentex.all(TestPostgresRepo, Note, @tenant_id)
     assert Enum.map(updated_notes, & &1.body) == ["updated", "updated"]
+  end
+
+  test ".set_tenant/2 struct adds the tenant prefix" do
+    prefix = %Note{}
+    |> set_tenant(@tenant_id)
+    |> Ecto.get_meta(:prefix)
+    assert prefix == "tenant_#{@tenant_id}"
+  end
+
+  test ".set_tenant/2 changeset adds the tenant prefix" do
+    prefix = Note.changeset(%Note{}, %{})
+    |> set_tenant(@tenant_id)
+    |> Map.fetch!(:data)
+    |> Ecto.get_meta(:prefix)
+
+    assert prefix == "tenant_#{@tenant_id}"
+  end
+
+  test ".set_tenant/2 queryable adds the tenant prefix" do
+    prefix = Note
+    |> set_tenant(@tenant_id)
+    |> Map.fetch!(:prefix)
+
+    assert prefix == "tenant_#{@tenant_id}"
+  end
+
+  test ".extract_tenant/1 removes the prefix from the schema" do
+    assert Apartmentex.PrefixBuilder.extract_tenant("tenant_#{@tenant_id}") == "#{@tenant_id}"
+    assert Apartmentex.PrefixBuilder.extract_tenant("tenant_somestring") == "somestring"
   end
 end
