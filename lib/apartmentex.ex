@@ -102,6 +102,24 @@ defmodule Apartmentex do
   end
 
   @doc """
+  Implementation for `Apartmentex.insert_or_update/4`.
+  """
+  def insert_or_update(repo, model_or_changeset, tenant, opts \\ []) do
+    model_or_changeset
+    |> add_prefix(tenant)
+    |> repo.insert_or_update(opts)
+  end
+
+  @doc """
+  Implementation for `Apartmentex.insert_or_update!/4`.
+  """
+  def insert_or_update!(repo, model_or_changeset, tenant, opts \\ []) do
+    model_or_changeset
+    |> add_prefix(tenant)
+    |> repo.insert_or_update!(opts)
+  end
+
+  @doc """
   Implementation for `Apartmentex.delete/4`.
   """
   def delete(repo, model_or_changeset, tenant, opts \\ []) do

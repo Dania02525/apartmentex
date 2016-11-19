@@ -159,4 +159,40 @@ defmodule Apartmentex.ApartmentexTest do
     updated_notes = Apartmentex.all(TestPostgresRepo, Note, @tenant_id)
     assert Enum.map(updated_notes, & &1.body) == ["updated", "updated"]
   end
+
+  test ".insert_or_update/4 can insert a changeset" do
+    changeset = Note.changeset(%Note{}, %{body: "foo"})
+    {:ok, inserted_note} = Apartmentex.insert_or_update(TestPostgresRepo, changeset, @tenant_id)
+    fetched_note = Apartmentex.get!(TestPostgresRepo, Note, inserted_note.id, @tenant_id)
+
+    assert fetched_note.id == inserted_note.id
+    assert fetched_note.body == "foo"
+  end
+
+  test ".insert_or_update!/4 can insert a changeset" do
+    changeset = Note.changeset(%Note{}, %{body: "foo"})
+    inserted_note = Apartmentex.insert_or_update!(TestPostgresRepo, changeset, @tenant_id)
+    fetched_note = Apartmentex.get!(TestPostgresRepo, Note, inserted_note.id, @tenant_id)
+
+    assert fetched_note.id == inserted_note.id
+    assert fetched_note.body == "foo"
+  end
+
+  test ".insert_or_update/4 updates a tenant's record" do
+    inserted_note = Apartmentex.insert!(TestPostgresRepo, %Note{body: "foo"}, @tenant_id)
+    changeset = Note.changeset(inserted_note, %{body: "bar"})
+    {:ok, updated_note} = Apartmentex.insert_or_update(TestPostgresRepo, changeset, @tenant_id)
+
+    assert updated_note.id == inserted_note.id
+    assert updated_note.body == "bar"
+  end
+
+  test ".insert_or_update!/4 updates a tenant's record" do
+    inserted_note = Apartmentex.insert!(TestPostgresRepo, %Note{body: "foo"}, @tenant_id)
+    changeset = Note.changeset(inserted_note, %{body: "bar"})
+    updated_note = Apartmentex.insert_or_update!(TestPostgresRepo, changeset, @tenant_id)
+
+    assert updated_note.id == inserted_note.id
+    assert updated_note.body == "bar"
+  end
 end
