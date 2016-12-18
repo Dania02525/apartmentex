@@ -92,7 +92,7 @@ defmodule Apartmentex do
     |> repo.update!(opts)
   end
 
-   @doc """
+  @doc """
   Runtime callback for `Apartmentex.update_all/5`
   """
   def update_all(repo, queryable, updates, tenant, opts \\ []) do
