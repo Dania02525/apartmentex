@@ -8,6 +8,6 @@ defmodule Apartmentex.Note do
 
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, ~w(body), [])
+    |> cast(params, ~w(body))
   end
 end
