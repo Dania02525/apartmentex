@@ -158,7 +158,7 @@ defmodule Apartmentex do
 
   defp add_prefix_to_query(queryable, tenant) do
     queryable
-    |> Ecto.Queryable.to_query
+    |> Ecto.Queryable.to_query()
     |> Map.put(:prefix, build_prefix(tenant))
   end
 end

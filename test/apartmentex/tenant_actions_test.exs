@@ -5,7 +5,6 @@ defmodule Apartmentex.TenantActionsTest do
   alias Apartmentex.TestPostgresRepo
 
   @migration_version 20160711125401
-  @wrong_migration_version 20160711125402
   @repo TestPostgresRepo
   @tenant_id 2
 
@@ -14,7 +13,7 @@ defmodule Apartmentex.TenantActionsTest do
   end
 
   test ".migrate_tenant/4 migrates the tenant forward by default" do
-    create_tenant_schema
+    create_tenant_schema()
 
     assert_creates_notes_table fn ->
       {status, prefix, versions} = Apartmentex.migrate_tenant(@repo, @tenant_id)
@@ -26,7 +25,7 @@ defmodule Apartmentex.TenantActionsTest do
   end
 
   test ".migrate_tenant/4 returns an error tuple when it fails" do
-    create_and_migrate_tenant
+    create_and_migrate_tenant()
 
     force_migration_failure fn(expected_postgres_error) ->
       {status, prefix, error_message} = Apartmentex.migrate_tenant(@repo, @tenant_id)
@@ -38,7 +37,7 @@ defmodule Apartmentex.TenantActionsTest do
   end
 
   test ".migrate_tenant/4 can rollback and return metadata" do
-    create_and_migrate_tenant
+    create_and_migrate_tenant()
 
     assert_drops_notes_table fn ->
       {status, prefix, versions} =
@@ -51,7 +50,7 @@ defmodule Apartmentex.TenantActionsTest do
   end
 
   test ".migrate_tenant/4 returns a tuple when it fails to rollback" do
-    create_and_migrate_tenant
+    create_and_migrate_tenant()
 
     force_rollback_failure fn(expected_postgres_error) ->
       {status, prefix, error_message} =
@@ -64,25 +63,25 @@ defmodule Apartmentex.TenantActionsTest do
   end
 
   defp assert_creates_notes_table(fun) do
-    assert_notes_table_is_dropped
+    assert_notes_table_is_dropped()
     fun.()
-    assert_notes_table_is_present
+    assert_notes_table_is_present()
   end
 
   defp assert_drops_notes_table(fun) do
-    assert_notes_table_is_present
+    assert_notes_table_is_present()
     fun.()
-    assert_notes_table_is_dropped
+    assert_notes_table_is_dropped()
   end
 
   defp assert_notes_table_is_dropped do
     assert_raise Postgrex.Error, fn ->
-      find_tenant_notes
+      find_tenant_notes()
     end
   end
 
   defp assert_notes_table_is_present do
-    assert find_tenant_notes == []
+    assert find_tenant_notes() == []
   end
 
   defp create_and_migrate_tenant do

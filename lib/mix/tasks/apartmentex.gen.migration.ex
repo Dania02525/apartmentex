@@ -41,7 +41,7 @@ defmodule Mix.Tasks.Apartmentex.Gen.Migration do
       case OptionParser.parse(args, switches: @switches) do
         {opts, [name], _} ->
           ensure_repo(repo, args)
-          path = Path.relative_to(tenant_migrations_path(repo), Mix.Project.app_path)
+          path = Path.relative_to(tenant_migrations_path(repo), Mix.Project.app_path())
           file = Path.join(path, "#{timestamp()}_#{underscore(name)}.exs")
           create_directory path
 
