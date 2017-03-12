@@ -5,7 +5,7 @@ defmodule Apartmentex.Mixfile do
     [
       app: :apartmentex,
       version: "0.2.2",
-      elixir: "~> 1.2-dev",
+      elixir: "~> 1.4",
       description: "SaaS Library for Ecto applications using Postgres or Mysql",
       package: [
         links: %{"Github" => "https://github.com/Dania02525/apartmentex"},
@@ -15,7 +15,7 @@ defmodule Apartmentex.Mixfile do
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       elixirc_paths: elixirc_paths(Mix.env),
-      deps: deps
+      deps: deps()
     ]
   end
 
@@ -43,7 +43,7 @@ defmodule Apartmentex.Mixfile do
     ]
   end
 
-  defp elixirc_paths(:test), do: elixirc_paths ++ ["test/support"]
-  defp elixirc_paths(_), do: elixirc_paths
+  defp elixirc_paths(:test), do: elixirc_paths() ++ ["test/support"]
+  defp elixirc_paths(_), do: elixirc_paths()
   defp elixirc_paths, do: ["lib"]
 end
