@@ -23,8 +23,12 @@ defmodule Apartmentex.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:ecto, :logger]]
+    [applications: applications(Mix.env)]
   end
+
+  defp applications(:test), do: [:ecto, :logger, :postgrex, :mariaex]
+
+  defp applications(_), do: [:ecto, :logger]
 
   # Dependencies can be Hex packages:
   #

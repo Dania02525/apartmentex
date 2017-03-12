@@ -1,4 +1,4 @@
-defmodule Apartmentex.TestPostgresRepo.Migrations.CreateTenantUser do
+defmodule Apartmentex.Repo.Migrations.CreateTenantNotes do
   use Ecto.Migration
 
   def change do
