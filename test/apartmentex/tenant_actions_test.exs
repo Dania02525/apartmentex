@@ -104,7 +104,7 @@ defmodule Apartmentex.TenantActionsTest do
 
     @repo |> Ecto.Adapters.SQL.query(sql, [])
 
-    migration_function.("ERROR (duplicate_table): relation \"notes\" already exists")
+    migration_function.("ERROR 42P07 (duplicate_table): relation \"notes\" already exists")
   end
 
   defp force_rollback_failure(rollback_function) do
@@ -114,6 +114,6 @@ defmodule Apartmentex.TenantActionsTest do
 
     @repo |> Ecto.Adapters.SQL.query(sql, [])
 
-    rollback_function.("ERROR (undefined_table): table \"notes\" does not exist")
+    rollback_function.("ERROR 42P01 (undefined_table): table \"notes\" does not exist")
   end
 end
