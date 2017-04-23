@@ -1,0 +1,240 @@
+    <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.15.1">
+    <title>Apartmentex.TenantActions – apartmentex v0.2.3</title>
+    <link rel="stylesheet" href="dist/app-af302bfcc4.css" />
+    
+      <link rel="canonical" href="https://hexdocs.pm/apartmentex/Apartmentex.TenantActions.html" />
+    
+    <script src="dist/sidebar_items-bee06c3c4c.js"></script>
+  </head>
+  <body data-type="modules">
+    <script>try { if(localStorage.getItem('night-mode')) document.body.className += ' night-mode'; } catch (e) { }</script>
+
+    <div class="main">
+<button class="sidebar-toggle">
+  <i class="icon-menu"></i>
+</button>
+<section class="sidebar">
+
+  
+  <a href="api-reference.html" class="sidebar-projectLink">
+    <div class="sidebar-projectDetails">
+      <h1 class="sidebar-projectName">
+        apartmentex
+      </h1>
+      <h2 class="sidebar-projectVersion">
+        v0.2.3
+      </h2>
+    </div>
+    
+  </a>
+
+  <div class="sidebar-search">
+    <i class="icon-search"></i>
+    <input type="text" class="sidebar-searchInput" placeholder="search" autocomplete="off" />
+  </div>
+
+  <ul class="sidebar-listNav">
+    <li><a id="extras-list" href="#full-list">Pages</a></li>
+
+    
+      <li><a id="modules-list" href="#full-list">Modules</a></li>
+    
+
+    
+
+    
+  </ul>
+  <div class="gradient"></div>
+  <ul id="full-list" class="sidebar-fullList"></ul>
+</section>
+
+<section class="content">
+  <div class="content-outer">
+    <div id="content" class="content-inner">
+
+
+      <h1>
+        <small class="visible-xs">apartmentex v0.2.3</small>
+        Apartmentex.TenantActions
+        
+        
+      </h1>
+
+      
+
+      
+        <section id="summary" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#summary">
+              <i class="icon-link"></i>
+            </a>
+            Summary
+          </h1>
+          
+
+          
+  <div class="summary-functions summary">
+    <h2>
+      <a href="#functions">Functions</a>
+    </h2>
+    <div class="summary-row">
+  <div class="summary-signature">
+    <a href="#create_schema/2">create_schema(repo, tenant)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#drop_tenant/2">drop_tenant(repo, tenant)</a>
+  </div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#migrate_tenant/4">migrate_tenant(repo, tenant, direction \\ :up, opts \\ [])</a>
+  </div>
+  
+    <div class="summary-synopsis"><p>Apply migrations to a tenant with given strategy, in given direction</p>
+</div>
+  
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#new_tenant/2">new_tenant(repo, tenant)</a>
+  </div>
+  
+</div>
+
+  </div>
+
+
+          
+
+        </section>
+      
+
+      
+
+      
+        <section id="functions" class="details-list">
+          <h1 class="section-heading">
+            <a class="hover-link" href="#functions">
+              <i class="icon-link"></i>
+            </a>
+            Functions
+          </h1>
+          <div class="detail" id="create_schema/2">
+  
+  <div class="detail-header">
+    <a href="#create_schema/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">create_schema(repo, tenant)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="drop_tenant/2">
+  
+  <div class="detail-header">
+    <a href="#drop_tenant/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">drop_tenant(repo, tenant)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    
+  </section>
+</div>
+<div class="detail" id="migrate_tenant/4">
+  
+    <span id="migrate_tenant/2" />
+  
+    <span id="migrate_tenant/3" />
+  
+  <div class="detail-header">
+    <a href="#migrate_tenant/4" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">migrate_tenant(repo, tenant, direction \\ :up, opts \\ [])</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    <p>Apply migrations to a tenant with given strategy, in given direction.</p>
+<p>A direction can be given, as the third parameter, which defaults to <code class="inline">:up</code>
+A strategy can be given as an option, and defaults to <code class="inline">:all</code></p>
+<h2 id="migrate_tenant/4-options" class="section-heading">
+  <a href="#migrate_tenant/4-options" class="hover-link"><i class="icon-link"></i></a>
+  Options
+</h2>
+
+<ul>
+<li><code class="inline">:all</code> - runs all available if <code class="inline">true</code>
+</li>
+<li><code class="inline">:step</code> - runs the specific number of migrations
+</li>
+<li><code class="inline">:to</code> - runs all until the supplied version is reached
+</li>
+<li><code class="inline">:log</code> - the level to use for logging. Defaults to <code class="inline">:info</code>.
+Can be any of <a href="https://hexdocs.pm/logger/Logger.html#level/0"><code class="inline">Logger.level/0</code></a> values or <code class="inline">false</code>.
+</li>
+</ul>
+
+  </section>
+</div>
+<div class="detail" id="new_tenant/2">
+  
+  <div class="detail-header">
+    <a href="#new_tenant/2" class="detail-link" title="Link to this function">
+      <i class="icon-link"></i>
+    </a>
+    <span class="signature">new_tenant(repo, tenant)</span>
+    
+    
+    
+  </div>
+  <section class="docstring">
+    
+  </section>
+</div>
+
+        </section>
+      
+
+      
+          <footer class="footer">
+        <p>
+          <span class="line">
+            Built using
+            <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" rel="help" target="_blank">ExDoc</a> (v0.15.1),
+          </span>
+          <span class="line">
+            designed by
+            <a href="https://twitter.com/dignifiedquire" target="_blank" title="@dignifiedquire">Friedel Ziegelmayer</a>.
+            </span>
+        </p>
+        <button class="night-mode-toggle" />
+      </footer>
+    </div>
+  </div>
+</section>
+</div>
+  <script src="dist/app-e9767fa739.js"></script>
+  </body>
+</html>
+

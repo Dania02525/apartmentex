@@ -4,7 +4,7 @@ defmodule Apartmentex.Mixfile do
   def project do
     [
       app: :apartmentex,
-      version: "0.2.2",
+      version: "0.2.3",
       elixir: "~> 1.4",
       description: "SaaS Library for Ecto applications using Postgres or Mysql",
       package: [
@@ -39,7 +39,8 @@ defmodule Apartmentex.Mixfile do
     [
       {:ecto, "~> 2.1"},
       {:mariaex, "~> 0.7", optional: true},
-      {:postgrex, ">= 0.11.0", optional: true}
+      {:postgrex, ">= 0.11.0", optional: true},
+      {:ex_doc, ">= 0.0.0", only: :dev}
     ]
   end
 
