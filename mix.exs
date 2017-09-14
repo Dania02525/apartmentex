@@ -37,8 +37,8 @@ defmodule Apartmentex.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     [
-      {:ecto, "~> 2.1"},
-      {:mariaex, "~> 0.7", optional: true},
+      {:ecto, "~> 2.2.3"},
+      {:mariaex, "~> 0.8.0", optional: true},
       {:postgrex, ">= 0.11.0", optional: true},
       {:ex_doc, ">= 0.0.0", only: :dev}
     ]
