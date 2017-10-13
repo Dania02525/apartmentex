@@ -21,7 +21,8 @@ See an example app at https://github.com/Dania02525/widget_saas
 ```elixir
 {:apartmentex, "~> 0.2.3"}
 ```
-- Run mix deps.get && mix deps.compile
+- Run:
+```mix deps.get && mix deps.compile```
 
 - You can also configure your tenant schema prefix, adding this to your application configs:
 ```elixir
