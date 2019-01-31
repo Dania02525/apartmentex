@@ -40,6 +40,7 @@ defmodule Apartmentex.TenantActions do
     case repo.__adapter__ do
       Postgres -> SQL.query(repo, "CREATE SCHEMA \"#{prefix}\"", [])
       MySQL    -> SQL.query(repo, "CREATE DATABASE #{prefix}", [])
+      Mongo.Ecto -> nil
     end
   end
 
@@ -48,6 +49,7 @@ defmodule Apartmentex.TenantActions do
     case repo.__adapter__ do
       Postgres -> SQL.query(repo, "DROP SCHEMA \"#{prefix}\" CASCADE", [])
       MySQL    -> SQL.query(repo, "DROP DATABASE #{prefix}", [])
+      Mongo.Ecto -> Mongo.Ecto.command(repo, [dropDatabase: 1], [database: prefix])
     end
   end
 
